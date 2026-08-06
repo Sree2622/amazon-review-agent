@@ -16,21 +16,9 @@ This directory prepares the Amazon Reviews 2023 All Beauty dataset for training 
 | `pipeline.py` | Runs the preprocessing workflow. |
 
 ## Workflow
-```text
-Raw JSONL Reviews
-        ↓
-Validation
-        ↓
-Text Cleaning
-        ↓
-Feature Engineering
-        ↓
-Sentiment Labeling
-        ↓
-Parquet Dataset
-        ↓
-Train / Validation / Test Split
-```
+
+![Pipeline Process](../docs/images/workflow.png)
+
 
 ## Recorded Output
 
