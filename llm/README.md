@@ -9,7 +9,7 @@ This directory contains Qwen-based sentiment classification with both the base i
 | `prompt_builder.py` | Builds review prompts for three-class sentiment prediction. |
 | `base_model.py` | Loads the quantized Qwen2.5-3B-Instruct model. |
 | `lora_model.py` | Loads Qwen with the trained LoRA adapter. |
-| `train_lora.py` | Fine-tunes Qwen with QLoRA. |
+| `train_lora.py` | Fine-tunes Qwen with QLoRA(on 500 samples) |
 | `evaluate.py` | Evaluates the base and LoRA models. |
 
 ## Results
