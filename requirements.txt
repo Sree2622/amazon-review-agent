@@ -1,0 +1,45 @@
+# Core
+numpy
+pandas
+pyarrow
+fastparquet
+tqdm
+polars
+
+# Machine Learning
+scikit-learn
+xgboost
+matplotlib
+
+# NLP
+nltk
+emoji
+beautifulsoup4
+
+# Hugging Face
+transformers
+datasets
+accelerate
+peft
+trl
+sentencepiece
+torch
+bitsandbytes
+
+# API
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+
+# Agent Orchestration
+langchain
+langgraph
+
+# Development
+pytest
+black
+isort
+flake8
+mypy
+python-dotenv
