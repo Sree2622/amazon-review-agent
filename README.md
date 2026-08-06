@@ -51,7 +51,7 @@ Each module is independent. See the **README.md** inside its respective director
 | Qwen2.5-3B-Instruct | LLM | 94.00% | 95.64% | 94.00% | 92.22% |
 | **Qwen2.5-3B-LoRA** | **LLM** | **97.00%** | **97.47%** | **97.00%** | **96.72%** |
 
-> ML models were evaluated on **69,355 reviews**, while the LLM models were evaluated on a **500-review sample**. These results are shown together for reference and are not intended as a direct benchmark.
+> ML models were evaluated on **69,355 reviews**, while the LLM models were evaluated on a **100-review sample**. These results are shown together for reference and are not intended as a direct benchmark.
 
 <p align="center">
   <img src="docs/images/model_accuracy_comparison.png" width="80%">
