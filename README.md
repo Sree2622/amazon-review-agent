@@ -1,62 +1,78 @@
 # Amazon Review Agent
 
-An end-to-end Amazon Beauty review intelligence project. It cleans and enriches the Amazon Reviews 2023 All Beauty dataset, trains sentiment classifiers, and exposes product discovery through an agentic Gemini-powered interface.
+An end-to-end Amazon Beauty review analysis project covering data preprocessing, sentiment modeling, and an agentic recommendation system for natural language product search.
 
-## Architecture
-
-![Project architecture](docs/images/architecture.png)
-
-The project moves from raw reviews to validated, feature-rich Parquet data. Classical ML and Qwen-based LLM models provide sentiment evaluation, while the agent uses tools and persistent state to answer product questions.
+---
 
 ## Project Structure
 
 ```text
 amazon-review-agent/
-├── agent/          Gemini-powered product-review agent
-├── configs/        Shared project and LoRA configuration
-├── data/           Raw and processed Amazon Beauty datasets
-├── llm/            Base Qwen and LoRA sentiment workflows
-├── ml/             Classical ML training and evaluation
-├── models/         Saved model artifacts and LoRA adapters
-└── preprocessing/  Data validation, cleaning, and feature engineering
+├── agent/          Agentic recommendation system
+├── configs/        Configuration files
+├── data/           Amazon Beauty datasets
+├── llm/            LLM training and evaluation
+├── ml/             Classical machine learning
+├── models/         Trained model artifacts
+└── preprocessing/  Data preprocessing pipeline
 ```
 
-## Results
-
-### Model comparison
-
-| Model | Family | Accuracy | Precision | Recall | F1 score | Evaluation set |
-| --- | --- | ---: | ---: | ---: | ---: | --- |
-| Logistic Regression | ML | 52.13% | 73.68% | 52.13% | 58.32% | 69,355 reviews |
-| Random Forest | ML | 83.37% | 81.48% | 83.37% | 81.73% | 69,355 reviews |
-| XGBoost | ML | 81.86% | 79.88% | 81.86% | 78.55% | 69,355 reviews |
-| Qwen2.5-3B-Instruct | LLM | 94.00% | 95.64% | 94.00% | 92.22% | 100 reviews |
-| Qwen2.5-3B-LoRA | LLM | 97.00% | 97.47% | 97.00% | 96.72% | 100 reviews |
-
-![Accuracy comparison](docs/images/model_accuracy_comparison.png)
-
-The LoRA-tuned Qwen model achieved the highest observed accuracy. The ML models were evaluated on the full 69,355-review test split, while the LLMs were evaluated on a 100-review sample; these figures are therefore reported together for visibility, not as a like-for-like benchmark.
-
-![Metric comparison](docs/images/model_metrics_comparison.png)
-
-Weighted precision, recall, and F1 show the same ranking within each recorded evaluation. Among the classical models, Random Forest achieved the strongest F1 score.
-
-![Preprocessing retention](docs/images/preprocessing_retention.png)
-
-Validation retained 693,547 of 701,528 raw reviews after removing 720 missing reviews and 7,261 duplicates.
+---
 
 ## Workflow
 
 ```text
-Raw Data → Preprocessing → Processed Data → ML / LLM Evaluation → Agentic Recommendations
+Amazon Reviews
+      │
+      ▼
+Data Preprocessing
+      │
+      ▼
+Processed Dataset
+      │
+      ├──► Machine Learning Models
+      ├──► LLM Evaluation
+      └──► Agentic Recommendation System
 ```
 
-## Getting Started
+Each module is independent. See the **README.md** inside its respective directory for setup instructions and execution.
 
-```bash
-pip install -r requirements.txt
-python -m preprocessing.pipeline
-python -m agent.cli
-```
+---
 
-For component-level details, see [preprocessing](preprocessing/README.md), [ML](ml/README.md), [LLM](llm/README.md), and [agent](agent/README.md).
+## Results
+
+### Model Performance
+
+| Model | Family | Accuracy | Precision | Recall | F1 Score |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Logistic Regression | ML | 52.13% | 73.68% | 52.13% | 58.32% |
+| Random Forest | ML | 83.37% | 81.48% | 83.37% | 81.73% |
+| XGBoost | ML | 81.86% | 79.88% | 81.86% | 78.55% |
+| Qwen2.5-3B-Instruct | LLM | 94.00% | 95.64% | 94.00% | 92.22% |
+| **Qwen2.5-3B-LoRA** | **LLM** | **97.00%** | **97.47%** | **97.00%** | **96.72%** |
+
+> ML models were evaluated on **69,355 reviews**, while the LLM models were evaluated on a **500-review sample**. These results are shown together for reference and are not intended as a direct benchmark.
+
+<p align="center">
+  <img src="docs/images/model_accuracy_comparison.png" width="80%">
+</p>
+
+<p align="center">
+  <img src="docs/images/preprocessing_retention.png" width="80%">
+</p>
+
+---
+
+## Agent Architecture
+
+The recommendation agent follows a tool-based architecture with three execution stages:
+
+- **Query:** Retrieve reviews and conversation memory.
+- **Process:** Analyze products and generate recommendations.
+- **Update:** Store memory, update the dashboard, and explain recommendations.
+
+The Agent Brain orchestrates all tools and manages the interaction between the user, databases, and the recommendation pipeline.
+
+<p align="center">
+  <img src="docs/images/architecture.png" width="95%">
+</p>
