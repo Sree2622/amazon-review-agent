@@ -1,65 +1,47 @@
 # Preprocessing
 
-This directory contains the preprocessing modules used to prepare the Amazon Review dataset for model training.
+This directory prepares the Amazon Reviews 2023 All Beauty dataset for training and agent use.
 
 ## Files
 
-| File                  | Description                                                                                                                                              |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dataset_loader.py`   | Loads Amazon Review datasets stored as JSONL files. Includes utilities to load, preview, and display dataset information.                                |
-| `validator.py`        | Validates the dataset by removing missing values, invalid ratings, and duplicate reviews. Generates a validation report.                                 |
-| `cleaner_review.py`   | Cleans review text by converting it to lowercase, removing URLs, tabs, extra spaces, and other unnecessary characters while preserving semantic meaning. |
-| `feature_engineer.py` | Creates additional features such as review length and word count for classical machine learning models.                                                  |
-| `sentiment_label.py`  | Generates sentiment labels from star ratings (`<3` → Negative, `3` → Neutral, `>3` → Positive).                                                          |
-| `pipeline.py`         | Executes the complete preprocessing pipeline in the correct order.                                                                                       |
-| `splitter.py`         | Splits the processed dataset into Train, Validation, and Test sets (80:10:10) and saves them as Parquet files in the `processed` directory.              |
-| `metadata_loader.py`  | Builds the processed product catalog used by the Review Agent.                                                                                           |
+| File | Description |
+| --- | --- |
+| `dataset_loader.py` | Loads and previews JSONL review data. |
+| `validator.py` | Removes missing, invalid, and duplicate records. |
+| `clean_reviews.py` | Normalizes review titles and text. |
+| `feature_engineering.py` | Adds review-length and word-count features. |
+| `sentiment_labels.py` | Converts ratings to sentiment labels. |
+| `metadata_loader.py` | Builds the processed product catalog. |
+| `splitter.py` | Creates train, validation, and test splits. |
+| `pipeline.py` | Runs the preprocessing workflow. |
 
-## Pipeline Workflow
+## Workflow
 
-```text
-Load Dataset
-      ↓
-Validate Dataset
-      ↓
-Clean Reviews
-      ↓
-Engineer Features
-      ↓
-Generate Sentiment Labels
-      ↓
-Save Processed Dataset
-      ↓
-Train / Validation / Test Split
+```mermaid
+flowchart LR
+    A[Raw JSONL reviews] --> B[Validate]
+    B --> C[Clean text]
+    C --> D[Engineer features]
+    D --> E[Create sentiment labels]
+    E --> F[Save Parquet data]
+    F --> G[Train / validation / test splits]
 ```
 
-## Validation
+## Recorded Output
 
-The validation step performs the following checks:
+| Stage | Reviews |
+| --- | ---: |
+| Raw dataset | 701,528 |
+| Missing reviews removed | 720 |
+| Duplicate reviews removed | 7,261 |
+| Final processed dataset | **693,547** |
 
-* Removes missing values.
-* Removes invalid ratings.
-* Removes duplicate reviews.
-* Generates a validation report.
+![Validation retention](../docs/images/preprocessing_retention.png)
 
-## Example Output
+The pipeline produced a 14-column processed dataset and saved it as `data/processed/All_Beauty.parquet`. Sentiment labels are derived from ratings: `< 3` negative, `3` neutral, and `> 3` positive.
 
-```text
-Preprocessing completed successfully.
-Final Dataset Shape : (693547, 14)
+## Command
 
-Saving processed dataset...
-Saved to: data/processed/All_Beauty.parquet
-
-Processed Dataset Preview
-
-shape: (10, 7)
-┌────────┬───────────┬───────┬───────────────┬────────────┬──────────────┬───────────────────┐
-│ rating ┆ sentiment ┆ label ┆ review_length ┆ word_count ┆ helpful_vote ┆ verified_purchase │
-├────────┼───────────┼───────┼───────────────┼────────────┼──────────────┼───────────────────┤
-│ 5.0    ┆ Positive  ┆ 2     ┆ 135           ┆ 21         ┆ 0            ┆ 1                 │
-│ 2.0    ┆ Negative  ┆ 0     ┆ 63            ┆ 12         ┆ 0            ┆ 1                 │
-│ 3.0    ┆ Neutral   ┆ 1     ┆ 132           ┆ 27         ┆ 1            ┆ 1                 │
-│ ...    ┆ ...       ┆ ...   ┆ ...           ┆ ...        ┆ ...          ┆ ...               │
-└────────┴───────────┴───────┴───────────────┴────────────┴──────────────┴───────────────────┘
+```bash
+python -m preprocessing.pipeline
 ```
