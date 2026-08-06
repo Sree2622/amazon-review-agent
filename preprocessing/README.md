@@ -18,13 +18,16 @@ This directory prepares the Amazon Reviews 2023 All Beauty dataset for training 
 ## Workflow
 
 ```mermaid
-flowchart LR
-    A[Raw JSONL reviews] --> B[Validate]
-    B --> C[Clean text]
-    C --> D[Engineer features]
-    D --> E[Create sentiment labels]
-    E --> F[Save Parquet data]
-    F --> G[Train / validation / test splits]
+flowchart TD
+    A[Raw JSONL Reviews]
+    B[Validate Data]
+    C[Clean Text]
+    D[Feature Engineering]
+    E[Generate Sentiment Labels]
+    F[Save as Parquet]
+    G[Train / Validation / Test Split]
+
+    A --> B --> C --> D --> E --> F --> G
 ```
 
 ## Recorded Output
