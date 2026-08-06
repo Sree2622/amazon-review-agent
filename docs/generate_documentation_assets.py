@@ -4,6 +4,21 @@ import shutil
 import matplotlib.pyplot as plt
 import numpy as np
 
+try:
+    import seaborn as sns
+    sns.set_theme(style="whitegrid", context="talk")
+    PALETTE_ML = sns.color_palette("Blues_d", 3) + sns.color_palette("light:teal", 0)
+    # Soft, muted seaborn palette (5 tones) for the 5 models
+    MODEL_COLORS = sns.color_palette("pastel", 5)
+    METRIC_COLORS = sns.color_palette("muted", 3)
+    STAGE_COLORS = sns.color_palette("pastel", 2)
+except ImportError:
+    sns = None
+    # Fallback: manually chosen soft/light hex tones mimicking seaborn "pastel"
+    MODEL_COLORS = ["#a1c9f4", "#8de5a1", "#ffb482", "#d0bbff", "#fab0e4"]
+    METRIC_COLORS = ["#4c72b0", "#55a868", "#c44e52"]
+    STAGE_COLORS = ["#a1c9f4", "#8de5a1"]
+
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 IMAGE_DIR = Path(__file__).resolve().parent / "images"
@@ -17,15 +32,17 @@ METRICS = {
     "F1 Score": [0.583243, 0.817283, 0.785476, 0.922237, 0.967195],
 }
 
-COLORS = ["#94a3b8", "#0f766e", "#0284c7", "#7c3aed", "#db2777"]
+BAR_WIDTH_SINGLE = 0.42   # thin single-series bars
+BAR_WIDTH_GROUPED = 0.18  # thin grouped bars
 
 
 def style_chart(ax, title: str) -> None:
     ax.set_title(title, loc="left", fontsize=16, fontweight="bold", pad=16)
     ax.spines[["top", "right", "left"]].set_visible(False)
-    ax.grid(axis="y", color="#e2e8f0", linewidth=0.8)
+    ax.grid(axis="y", color="#e5e7eb", linewidth=0.7)
     ax.set_axisbelow(True)
     ax.tick_params(axis="y", length=0)
+    ax.tick_params(axis="x", length=0)
 
 
 def save_figure(name: str) -> None:
@@ -36,23 +53,31 @@ def save_figure(name: str) -> None:
 
 def create_accuracy_chart() -> None:
     fig, ax = plt.subplots(figsize=(10, 5.4))
-    bars = ax.bar(MODELS, ACCURACY, color=COLORS, width=0.62)
+    bars = ax.bar(
+        MODELS, ACCURACY,
+        color=MODEL_COLORS, width=BAR_WIDTH_SINGLE,
+        edgecolor="white", linewidth=1.2,
+    )
     style_chart(ax, "Accuracy across ML and LLM models")
     ax.set_ylim(0, 1.08)
     ax.set_ylabel("Accuracy")
     ax.yaxis.set_major_formatter("{x:.0%}")
     for bar, value in zip(bars, ACCURACY):
-        ax.text(bar.get_x() + bar.get_width() / 2, value + 0.025, f"{value:.1%}", ha="center", fontweight="bold")
+        ax.text(bar.get_x() + bar.get_width() / 2, value + 0.025, f"{value:.1%}",
+                 ha="center", fontweight="bold", color="#334155")
     save_figure("model_accuracy_comparison.png")
 
 
 def create_metrics_chart() -> None:
     fig, ax = plt.subplots(figsize=(11.5, 6))
     x = np.arange(len(MODELS))
-    width = 0.23
-    metric_colors = ["#0f766e", "#0284c7", "#7c3aed"]
+    width = BAR_WIDTH_GROUPED
     for index, (metric, values) in enumerate(METRICS.items()):
-        ax.bar(x + (index - 1) * width, values, width, label=metric, color=metric_colors[index])
+        ax.bar(
+            x + (index - 1) * width, values, width,
+            label=metric, color=METRIC_COLORS[index],
+            edgecolor="white", linewidth=1.0,
+        )
     style_chart(ax, "Weighted precision, recall, and F1 score")
     ax.set_ylim(0, 1.08)
     ax.set_ylabel("Score")
@@ -67,14 +92,19 @@ def create_preprocessing_chart() -> None:
     fig, ax = plt.subplots(figsize=(8.8, 5.2))
     stages = ["Raw reviews", "After validation"]
     values = [701_528, 693_547]
-    bars = ax.bar(stages, values, color=["#94a3b8", "#0f766e"], width=0.52)
+    bars = ax.bar(
+        stages, values, color=STAGE_COLORS, width=BAR_WIDTH_SINGLE,
+        edgecolor="white", linewidth=1.2,
+    )
     style_chart(ax, "Preprocessing retention after validation")
     ax.set_ylim(0, 800_000)
     ax.set_ylabel("Review count")
     ax.yaxis.set_major_formatter("{x:,.0f}")
     for bar, value in zip(bars, values):
-        ax.text(bar.get_x() + bar.get_width() / 2, value + 20_000, f"{value:,}", ha="center", fontweight="bold")
-    ax.text(0.5, 90_000, "7,981 records removed: missing reviews and duplicates", ha="center", color="#475569")
+        ax.text(bar.get_x() + bar.get_width() / 2, value + 20_000, f"{value:,}",
+                 ha="center", fontweight="bold", color="#334155")
+    ax.text(0.5, 90_000, "7,981 records removed: missing reviews and duplicates",
+             ha="center", color="#64748b")
     save_figure("preprocessing_retention.png")
 
 
